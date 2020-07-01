@@ -1,2 +1,3 @@
 rootProject.name='android-base'
 include ':app'
+include ':core'
