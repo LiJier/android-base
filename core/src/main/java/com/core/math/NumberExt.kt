@@ -4,7 +4,7 @@ import android.content.res.Resources.NotFoundException
 import android.text.format.DateFormat
 import android.util.TypedValue
 import androidx.core.content.res.ResourcesCompat
-import com.core.base.CoreApp
+import com.core.app.CoreApp
 
 /**
  * Create by LiJie at 2019-05-29

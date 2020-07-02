@@ -6,8 +6,8 @@ import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.core.base.IRepository
-import com.core.base.RepositoryViewModel
+import com.core.repository.IRepository
+import com.core.viewmodel.RepositoryViewModel
 
 /**
  * Create by LiJie at 2019-05-29

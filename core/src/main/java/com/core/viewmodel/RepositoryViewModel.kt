@@ -1,7 +1,8 @@
-package com.core.base
+package com.core.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.core.repository.IRepository
 import com.core.vo.ResLiveData
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch

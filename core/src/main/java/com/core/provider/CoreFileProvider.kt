@@ -1,4 +1,4 @@
-package com.core.base
+package com.core.provider
 
 import androidx.core.content.FileProvider
 

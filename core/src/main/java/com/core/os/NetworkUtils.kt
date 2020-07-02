@@ -3,7 +3,7 @@ package com.core.os
 import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkInfo
-import com.core.base.CoreApp
+import com.core.app.CoreApp
 
 
 /**

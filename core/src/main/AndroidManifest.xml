@@ -2,10 +2,10 @@
     package="com.core">
 
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <application android:name=".base.CoreApp">
+    <application android:name=".app.CoreApp">
 
         <provider
-            android:name=".base.CoreFileProvider"
+            android:name=".provider.CoreFileProvider"
             android:authorities="${applicationId}.core.fileprovider"
             android:exported="false"
             android:grantUriPermissions="true">

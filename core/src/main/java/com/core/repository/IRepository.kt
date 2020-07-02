@@ -1,4 +1,4 @@
-package com.core.base
+package com.core.repository
 
 /**
  * Create by LiJie at 2019-05-27

@@ -6,7 +6,7 @@ import android.os.Build
 import android.text.TextUtils
 import android.widget.Toast
 import androidx.core.content.FileProvider
-import com.core.base.CoreApp
+import com.core.app.CoreApp
 import java.io.File
 import java.security.MessageDigest
 import java.util.*

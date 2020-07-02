@@ -2,7 +2,7 @@ package com.core.os
 
 import android.content.Context
 import android.content.SharedPreferences
-import com.core.base.CoreApp
+import com.core.app.CoreApp
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 
