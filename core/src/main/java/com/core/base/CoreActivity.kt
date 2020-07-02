@@ -5,6 +5,7 @@ import android.app.Dialog
 import android.os.Bundle
 import android.view.LayoutInflater
 import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.Fragment
 import com.core.R
 import com.core.os.fullShow
 import com.core.os.hideNavigationBar
@@ -20,6 +21,9 @@ import kotlinx.android.synthetic.main.layout_process.*
  * BaseActivity，封装一些常用方法
  */
 open class CoreActivity : AppCompatActivity() {
+
+    protected open var contentId = 0
+    private var current: Fragment? = null
 
     //加载进度条
     private val processDialog by lazy {
@@ -72,6 +76,33 @@ open class CoreActivity : AppCompatActivity() {
      * 是否是全屏
      */
     protected open fun isFullScreen() = false
+
+    protected fun addContent(fragment: Fragment) {
+        supportFragmentManager.beginTransaction().apply {
+            add(contentId, fragment)
+            current = fragment
+        }.commitAllowingStateLoss()
+    }
+
+    private fun replaceContent(fragment: Fragment) {
+        supportFragmentManager.beginTransaction().apply {
+            replace(contentId, fragment)
+        }.commitAllowingStateLoss()
+    }
+
+    private fun switchContent(target: Fragment) {
+        supportFragmentManager.beginTransaction().apply {
+            current?.let {
+                hide(it)
+            }
+            if (target.isAdded) {
+                show(target)
+                current = target
+            } else {
+                add(contentId, target)
+            }
+        }.commitAllowingStateLoss()
+    }
 
     override fun onWindowFocusChanged(hasFocus: Boolean) {
         super.onWindowFocusChanged(hasFocus)

@@ -29,6 +29,8 @@ abstract class CoreFragment : Fragment() {
 
     //fragment布局文件
     protected abstract val layoutRes: Int
+    protected open var contentId = 0
+    private var current: Fragment? = null
 
     //加载进度条
     private val processDialog by lazy {
@@ -114,6 +116,33 @@ abstract class CoreFragment : Fragment() {
      * 是否是全屏
      */
     protected open fun isFullScreen() = false
+
+    protected fun addContent(fragment: Fragment) {
+        childFragmentManager.beginTransaction().apply {
+            add(contentId, fragment)
+            current = fragment
+        }.commitAllowingStateLoss()
+    }
+
+    private fun replaceContent(fragment: Fragment) {
+        childFragmentManager.beginTransaction().apply {
+            replace(contentId, fragment)
+        }.commitAllowingStateLoss()
+    }
+
+    private fun switchContent(target: Fragment) {
+        childFragmentManager.beginTransaction().apply {
+            current?.let {
+                hide(it)
+            }
+            if (target.isAdded) {
+                show(target)
+                current = target
+            } else {
+                add(contentId, target)
+            }
+        }.commitAllowingStateLoss()
+    }
 
     /**
      * 返回按钮点击事件
