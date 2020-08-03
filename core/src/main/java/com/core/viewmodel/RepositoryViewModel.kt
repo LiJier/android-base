@@ -14,22 +14,22 @@ import kotlinx.coroutines.withContext
  */
 open class RepositoryViewModel<out T : IRepository>(protected val repository: T) : ViewModel() {
 
-    protected inline fun <T, P> launch(
-        resLiveData: ResLiveData<T, P>? = null,
+    protected inline fun <T> launch(
+        resLiveData: ResLiveData<T>? = null,
         crossinline block: suspend () -> T?
     ) {
         viewModelScope.launch {
             try {
                 withContext(Dispatchers.Main) {
-                    resLiveData?.loading(resLiveData.progress, resLiveData.data)
+                    resLiveData?.loading(resLiveData.progress)
                     val t = withContext(Dispatchers.IO) {
                         block()
                     }
-                    resLiveData?.success(t, resLiveData.progress)
+                    resLiveData?.success(t)
                 }
             } catch (e: Exception) {
                 e.printStackTrace()
-                resLiveData?.error(e, resLiveData.data, resLiveData.progress)
+                resLiveData?.error(e)
             }
         }
     }

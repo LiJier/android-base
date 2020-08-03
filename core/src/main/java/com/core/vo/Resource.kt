@@ -4,10 +4,11 @@ package com.core.vo
  * Create by LiJie at 2019-05-27
  * LiveData数据封装，可以发送状态
  */
-data class Resource<out T, out P>(
+data class Resource<out T>(
     val status: Status,
     val data: T?,
-    val progress: P?,
+    val progress: Int?,
+    val message: String?,
     val error: Throwable?
 ) {
 
@@ -15,22 +16,27 @@ data class Resource<out T, out P>(
         /**
          * 获取成功状态的Resource
          */
-        fun <T, P> success(data: T?, progress: P?): Resource<T, P> {
-            return Resource(Status.SUCCESS, data, progress, null)
+        fun <T> success(data: T?, progress: Int?, message: String?): Resource<T> {
+            return Resource(Status.SUCCESS, data, progress, message, null)
         }
 
         /**
          * 获取错误状态的Resource
          */
-        fun <T, P> error(error: Throwable, data: T?, progress: P?): Resource<T, P> {
-            return Resource(Status.ERROR, data, progress, error)
+        fun <T> error(
+            error: Throwable,
+            data: T?,
+            progress: Int?,
+            message: String?
+        ): Resource<T> {
+            return Resource(Status.ERROR, data, progress, message, error)
         }
 
         /**
          * 获取loading状态的Resource
          */
-        fun <T, P> loading(progress: P?, data: T?): Resource<T, P> {
-            return Resource(Status.LOADING, data, progress, null)
+        fun <T> loading(progress: Int?, data: T?, message: String?): Resource<T> {
+            return Resource(Status.LOADING, data, progress, message, null)
         }
     }
 
@@ -48,9 +54,9 @@ enum class Status {
 /**
  * 成功时调用
  */
-inline fun <T, P> Resource<T, P>.onSuccess(onSuccess: (T?, P?) -> Unit): Resource<T, P> {
+inline fun <T> Resource<T>.onSuccess(onSuccess: (T?) -> Unit): Resource<T> {
     return if (this.status == Status.SUCCESS) {
-        this.also { onSuccess.invoke(it.data, it.progress) }
+        this.also { onSuccess.invoke(it.data) }
     } else {
         this
     }
@@ -59,9 +65,9 @@ inline fun <T, P> Resource<T, P>.onSuccess(onSuccess: (T?, P?) -> Unit): Resourc
 /**
  * 加载中时调用
  */
-inline fun <T, P> Resource<T, P>.onLoading(onLoading: (T?, P?) -> Unit): Resource<T, P> {
+inline fun <T> Resource<T>.onLoading(onLoading: (Int?) -> Unit): Resource<T> {
     return if (this.status == Status.LOADING) {
-        this.also { onLoading.invoke(it.data, it.progress) }
+        this.also { onLoading.invoke(it.progress) }
     } else {
         this
     }
@@ -70,9 +76,9 @@ inline fun <T, P> Resource<T, P>.onLoading(onLoading: (T?, P?) -> Unit): Resourc
 /**
  * 错误时调用
  */
-inline fun <T, P> Resource<T, P>.onError(onError: (Throwable?, T?, P?) -> Unit): Resource<T, P> {
+inline fun <T> Resource<T>.onError(onError: (Throwable?) -> Unit): Resource<T> {
     return if (this.status == Status.ERROR) {
-        this.also { onError.invoke(this.error, it.data, it.progress) }
+        this.also { onError.invoke(this.error) }
     } else {
         this
     }

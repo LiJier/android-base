@@ -53,8 +53,8 @@ abstract class CoreFragment : Fragment() {
         //设置fragment背景，防止点击穿透或者透明问题
         view.background ?: run {
             val typedValue = TypedValue()
-            context?.theme?.resolveAttribute(R.attr.background, typedValue, true)
-            val color = typedValue.data
+            context?.theme?.resolveAttribute(android.R.attr.windowBackground, typedValue, true)
+            val color = typedValue.resourceId
             if (color == 0) {
                 ViewCompat.setBackground(
                     view,
@@ -117,31 +117,65 @@ abstract class CoreFragment : Fragment() {
      */
     protected open fun isFullScreen() = false
 
-    protected fun addContent(fragment: Fragment) {
-        childFragmentManager.beginTransaction().apply {
-            add(contentId, fragment)
-            current = fragment
-        }.commitAllowingStateLoss()
+    public fun addContent(
+        fragment: Fragment,
+        addToBackStack: Boolean = true,
+        isChild: Boolean = false
+    ) {
+        if (isChild) {
+            childFragmentManager.beginTransaction().apply {
+                add(contentId, fragment)
+                if (addToBackStack) {
+                    addToBackStack(fragment.javaClass.simpleName)
+                }
+                current = fragment
+            }.commitAllowingStateLoss()
+        } else {
+            (requireActivity() as? CoreActivity)?.addContent(fragment, addToBackStack)
+        }
     }
 
-    private fun replaceContent(fragment: Fragment) {
-        childFragmentManager.beginTransaction().apply {
-            replace(contentId, fragment)
-        }.commitAllowingStateLoss()
+    public fun replaceContent(
+        fragment: Fragment,
+        addToBackStack: Boolean = false,
+        isChild: Boolean = false
+    ) {
+        if (isChild) {
+            childFragmentManager.beginTransaction().apply {
+                replace(contentId, fragment)
+                if (addToBackStack) {
+                    addToBackStack(fragment.javaClass.simpleName)
+                }
+                current = fragment
+            }.commitAllowingStateLoss()
+        } else {
+            (requireActivity() as? CoreActivity)?.replaceContent(fragment, addToBackStack)
+        }
     }
 
-    private fun switchContent(target: Fragment) {
-        childFragmentManager.beginTransaction().apply {
-            current?.let {
-                hide(it)
-            }
-            if (target.isAdded) {
-                show(target)
+    public fun switchContent(
+        target: Fragment,
+        addToBackStack: Boolean = false,
+        isChild: Boolean = false
+    ) {
+        if (isChild) {
+            childFragmentManager.beginTransaction().apply {
+                current?.let {
+                    hide(it)
+                }
+                if (target.isAdded) {
+                    show(target)
+                } else {
+                    add(contentId, target)
+                    if (addToBackStack) {
+                        addToBackStack(target.javaClass.simpleName)
+                    }
+                }
                 current = target
-            } else {
-                add(contentId, target)
-            }
-        }.commitAllowingStateLoss()
+            }.commitAllowingStateLoss()
+        } else {
+            (requireActivity() as? CoreActivity)?.switchContent(target, addToBackStack)
+        }
     }
 
     /**
@@ -151,28 +185,28 @@ abstract class CoreFragment : Fragment() {
         return false
     }
 
-    open fun <T, P> Resource<T, P>.onDefaultSuccess(onSuccess: ((T?, P?) -> Unit)? = null): Resource<T, P> {
-        return this.onSuccess { t, p ->
+    open fun <T> Resource<T>.onDefaultSuccess(onSuccess: ((T?) -> Unit)? = null): Resource<T> {
+        return this.onSuccess { t ->
             hideProcessDialog()
-            onSuccess?.invoke(t, p)
+            onSuccess?.invoke(t)
         }
     }
 
-    open fun <T, P> Resource<T, P>.onDefaultLoading(
+    open fun <T> Resource<T>.onDefaultLoading(
         processText: String? = "",
-        onLoading: ((T?, P?) -> Unit)? = null
-    ): Resource<T, P> {
-        return this.onLoading { t, p ->
+        onLoading: ((Int?) -> Unit)? = null
+    ): Resource<T> {
+        return this.onLoading { p ->
             showProcessDialog(processText)
-            onLoading?.invoke(t, p)
+            onLoading?.invoke(p)
         }
     }
 
-    open fun <T, P> Resource<T, P>.onDefaultError(onError: ((Throwable?, T?, P?) -> Unit)? = null): Resource<T, P> {
-        return this.onError { throwable, t, p ->
+    open fun <T> Resource<T>.onDefaultError(onError: ((Throwable?) -> Unit)? = null): Resource<T> {
+        return this.onError { throwable ->
             hideProcessDialog()
             this.error?.message?.toast()
-            onError?.invoke(throwable, t, p)
+            onError?.invoke(throwable)
         }
     }
 

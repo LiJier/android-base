@@ -77,30 +77,40 @@ open class CoreActivity : AppCompatActivity() {
      */
     protected open fun isFullScreen() = false
 
-    protected fun addContent(fragment: Fragment) {
+    public fun addContent(fragment: Fragment, addToBackStack: Boolean = true) {
         supportFragmentManager.beginTransaction().apply {
             add(contentId, fragment)
+            if (addToBackStack) {
+                addToBackStack(fragment.javaClass.simpleName)
+            }
             current = fragment
         }.commitAllowingStateLoss()
     }
 
-    private fun replaceContent(fragment: Fragment) {
+    public fun replaceContent(fragment: Fragment, addToBackStack: Boolean = false) {
         supportFragmentManager.beginTransaction().apply {
             replace(contentId, fragment)
+            if (addToBackStack) {
+                addToBackStack(fragment.javaClass.simpleName)
+            }
+            current = fragment
         }.commitAllowingStateLoss()
     }
 
-    private fun switchContent(target: Fragment) {
+    public fun switchContent(target: Fragment, addToBackStack: Boolean = false) {
         supportFragmentManager.beginTransaction().apply {
             current?.let {
                 hide(it)
             }
             if (target.isAdded) {
                 show(target)
-                current = target
             } else {
                 add(contentId, target)
+                if (addToBackStack) {
+                    addToBackStack(target.javaClass.simpleName)
+                }
             }
+            current = target
         }.commitAllowingStateLoss()
     }
 
@@ -134,28 +144,28 @@ open class CoreActivity : AppCompatActivity() {
         ActivityManager.pop(this)
     }
 
-    open fun <T, P> Resource<T, P>.onDefaultSuccess(onSuccess: ((T?, P?) -> Unit)? = null): Resource<T, P> {
-        return this.onSuccess { t, p ->
+    open fun <T> Resource<T>.onDefaultSuccess(onSuccess: ((T?) -> Unit)? = null): Resource<T> {
+        return this.onSuccess { t ->
             hideProcessDialog()
-            onSuccess?.invoke(t, p)
+            onSuccess?.invoke(t)
         }
     }
 
-    open fun <T, P> Resource<T, P>.onDefaultLoading(
+    open fun <T> Resource<T>.onDefaultLoading(
         processText: String? = "",
-        onLoading: ((T?, P?) -> Unit)? = null
-    ): Resource<T, P> {
-        return this.onLoading { t, p ->
+        onLoading: ((Int?) -> Unit)? = null
+    ): Resource<T> {
+        return this.onLoading { p ->
             showProcessDialog(processText)
-            onLoading?.invoke(t, p)
+            onLoading?.invoke(p)
         }
     }
 
-    open fun <T, P> Resource<T, P>.onDefaultError(onError: ((Throwable?, T?, P?) -> Unit)? = null): Resource<T, P> {
-        return this.onError { throwable, t, p ->
+    open fun <T> Resource<T>.onDefaultError(onError: ((Throwable?) -> Unit)? = null): Resource<T> {
+        return this.onError { throwable ->
             hideProcessDialog()
             this.error?.message?.toast()
-            onError?.invoke(throwable, t, p)
+            onError?.invoke(throwable)
         }
     }
 

@@ -32,7 +32,7 @@ object DownloadService {
     private val downloadApi = retrofit.create(DownloadApi::class.java)
     private val mainScope = CoroutineScope(SupervisorJob() + Dispatchers.Main)
 
-    fun download(url: String, path: String, downloadProcessData: ResLiveData<Any, Int>) {
+    fun download(url: String, path: String, downloadProcessData: ResLiveData<Any>) {
         val exceptionHandler = CoroutineExceptionHandler { _, throwable ->
             throwable.printStackTrace()
             downloadProcessData.error(throwable)
