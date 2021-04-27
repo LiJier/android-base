@@ -71,6 +71,8 @@ abstract class CoreFragment : Fragment() {
                 )
             }
         }
+        view.isClickable = true
+        view.isFocusableInTouchMode = true
     }
 
     /**

@@ -126,7 +126,7 @@ open class CoreActivity : AppCompatActivity() {
      */
     override fun onBackPressed() {
         var back = true
-        supportFragmentManager.fragments.forEach { fragment ->
+        supportFragmentManager.fragments.reversed().forEach { fragment ->
             (fragment as? CoreFragment)?.onBackPressed()?.let {
                 if (it) {
                     back = false
@@ -142,6 +142,7 @@ open class CoreActivity : AppCompatActivity() {
     override fun onDestroy() {
         super.onDestroy()
         ActivityManager.pop(this)
+        arrayListOf<String>().forEachIndexed { index, s -> }
     }
 
     open fun <T> Resource<T>.onDefaultSuccess(onSuccess: ((T?) -> Unit)? = null): Resource<T> {
