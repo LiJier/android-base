@@ -125,16 +125,7 @@ open class CoreActivity : AppCompatActivity() {
      * 返回按钮点击事件，并将事件传递到fragment
      */
     override fun onBackPressed() {
-        var back = true
-        supportFragmentManager.fragments.reversed().forEach { fragment ->
-            (fragment as? CoreFragment)?.onBackPressed()?.let {
-                if (it) {
-                    back = false
-                    return@forEach
-                }
-            }
-        }
-        if (back) {
+        if ((supportFragmentManager.fragments.last() as? CoreFragment)?.onBackPressed() != true) {
             super.onBackPressed()
         }
     }
@@ -142,7 +133,6 @@ open class CoreActivity : AppCompatActivity() {
     override fun onDestroy() {
         super.onDestroy()
         ActivityManager.pop(this)
-        arrayListOf<String>().forEachIndexed { index, s -> }
     }
 
     open fun <T> Resource<T>.onDefaultSuccess(onSuccess: ((T?) -> Unit)? = null): Resource<T> {
