@@ -125,7 +125,7 @@ open class CoreActivity : AppCompatActivity() {
      * 返回按钮点击事件，并将事件传递到fragment
      */
     override fun onBackPressed() {
-        if ((supportFragmentManager.fragments.last() as? CoreFragment)?.onBackPressed() != true) {
+        if ((supportFragmentManager.fragments.lastOrNull() as? CoreFragment)?.onBackPressed() != true) {
             super.onBackPressed()
         }
     }
