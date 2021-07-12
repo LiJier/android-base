@@ -7,9 +7,7 @@ import android.view.LayoutInflater
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.core.R
-import com.core.os.fullShow
-import com.core.os.hideNavigationBar
-import com.core.os.toast
+import com.core.os.*
 import com.core.vo.Resource
 import com.core.vo.onError
 import com.core.vo.onLoading
@@ -42,7 +40,12 @@ open class CoreActivity : AppCompatActivity() {
      * 显示进度条
      */
     protected open fun showProcessDialog(processText: String? = "加载中...") {
-        processDialog.process_text_view?.text = processText
+        if (processText.isNullOrEmpty()) {
+            processDialog.process_text_view.gone()
+        } else {
+            processDialog.process_text_view.visible()
+            processDialog.process_text_view?.text = processText
+        }
         if (isFullScreen()) {
             processDialog.fullShow()
         } else {

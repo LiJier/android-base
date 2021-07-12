@@ -1,9 +1,9 @@
 package com.lj.base
 
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
+import com.core.base.CoreActivity
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : CoreActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
